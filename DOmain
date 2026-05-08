@@ -1,0 +1,29 @@
+import requests
+import urllib3
+
+# Suppress insecure request warnings if you haven't set up valid SSL certs for AAP yet
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Replace '14' with your actual Job Template ID from Step 2
+# Replace the IP with your actual AAP Controller IP
+url = "https://192.168.0.156/api/v2/job_templates/14/launch/"
+
+headers = {
+    "Authorization": "EqMJXvREUF0JqzFnt4Km1lybZnlZyY",
+    "Content-Type": "application/json"
+}
+
+# The target_machine now perfectly maps to the "{{ target_machine }}" variable in the playbook
+payload = {
+    "extra_vars": {
+        "target_machine": "WIN-VA36GSSJ9B4.indirectory.com"
+    }
+}
+
+response = requests.post(url, headers=headers, json=payload, verify=False)
+
+if response.status_code == 201:
+    print("Ansible Playbook successfully launched!")
+    print("Job ID:", response.json().get('job'))
+else:
+    print("Failed to launch:", response.status_code, response.text)
